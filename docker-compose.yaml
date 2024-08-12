@@ -1,3 +1,5 @@
+version: '3.8'
+
 x-airflow-common:
   &airflow-common
   image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.9.2}
@@ -61,7 +63,7 @@ services:
     <<: *airflow-common
     command: scheduler
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"] # Correct port for scheduler healthcheck
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -128,7 +130,7 @@ services:
       MB_DB_PORT: "5432"
       MB_DB_USER: "${POSTGRES_USER}"
       MB_DB_PASS: "${POSTGRES_PASSWORD}"
-      MB_DB_HOST: "db"
+      MB_DB_HOST: "postgres" # Use the correct service name here
       MB_PASSWORD_COMPLEXITY: strong
       MB_PASSWORD_LENGTH: 10
       JAVA_TIMEZONE: "${MB_JAVA_TIMEZONE}"
@@ -137,7 +139,7 @@ services:
     extra_hosts:
       - host.docker.internal:host-gateway
     depends_on:
-      - db
+      - postgres
 
 volumes:
   postgres-db-volume:
