@@ -121,20 +121,23 @@ services:
 
   metabase:
     image: metabase/metabase:latest
-    container_name: metabase
-    platform: linux/amd64
-    ports:
-      - "3000:3000"
+    restart: always
     environment:
-      MB_DB_TYPE: postgres
-      MB_DB_DBNAME: ${POSTGRES_DB}
-      MB_DB_PORT: ${POSTGRES_PORT:-5432} # Default to 5432 if not provided
-      MB_DB_USER: ${POSTGRES_USER}
-      MB_DB_PASS: ${POSTGRES_PASSWORD}
-      MB_DB_HOST: ${POSTGRES_HOST:-host.docker.internal} # Default to host.docker.internal if not provided
-    depends_on: 
-      postgres:
-        condition: service_healthy
+      MB_DB_TYPE: "postgres"
+      MB_DB_DBNAME: "${POSTGRES_DB}"
+      MB_DB_PORT: "5432"
+      MB_DB_USER: "${POSTGRES_USER}"
+      MB_DB_PASS: "${POSTGRES_PASSWORD}"
+      MB_DB_HOST: "db"
+      MB_PASSWORD_COMPLEXITY: strong
+      MB_PASSWORD_LENGTH: 10
+      JAVA_TIMEZONE: "${MB_JAVA_TIMEZONE}"
+    ports:
+      - 127.0.0.1:${MB_PORT}:3000
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    depends_on:
+      - db
 
 volumes:
   postgres-db-volume:
