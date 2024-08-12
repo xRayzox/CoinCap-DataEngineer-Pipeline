@@ -92,14 +92,12 @@ services:
   airflow-init:
     <<: *airflow-common
     entrypoint: /bin/bash
-    # yamllint disable rule:line-length
     command:
       - -c
       - |
         mkdir -p /sources/logs /sources/dags /sources/plugins
         chown -R "${AIRFLOW_UID}:0" /sources/{logs,dags,plugins}
         exec /entrypoint airflow version
-    # yamllint enable rule:line-length
     environment:
       <<: *airflow-common-env
       _AIRFLOW_DB_MIGRATE: 'true'
@@ -118,7 +116,6 @@ services:
     environment:
       <<: *airflow-common-env
       CONNECTION_CHECK_MAX_COUNT: "0"
-    # Workaround for entrypoint issue. See: https://github.com/apache/airflow/issues/16252
     command:
       - bash
       - -c
@@ -133,7 +130,7 @@ services:
       MB_DB_PORT: "5432"
       MB_DB_USER: "${POSTGRES_USER}"
       MB_DB_PASS: "${POSTGRES_PASSWORD}"
-      MB_DB_HOST: "postgres" # Use the correct service name here
+      MB_DB_HOST: "${POSTGRES_HOST}" 
       MB_PASSWORD_COMPLEXITY: strong
       MB_PASSWORD_LENGTH: 10
       JAVA_TIMEZONE: "${MB_JAVA_TIMEZONE}"
